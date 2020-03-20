@@ -67,6 +67,10 @@ def shortest_path(starting_vertex, destination_vertex):
 
 
 while len(visited) < len(room_graph)-1:
+    for i in hubs:
+        if len(visited[i]) == 0:
+            hubs.remove(i)
+
 
     if player.current_room.id not in visited:
         visited[player.current_room.id] = player.current_room.get_exits()
