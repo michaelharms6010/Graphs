@@ -73,6 +73,8 @@ while len(visited) < len(room_graph)-1:
         if (len(visited[player.current_room.id]) == 0):
 
         # teh below code favored the shortest path to any hub remaining - it reduced efficiency by about 20 moves
+        # I'm thinking maybe some more thorough elimination of hubs would maybe make this useful
+        
         # if len(hubs) > 0:
         #     print(hubs)
         #     paths = []
