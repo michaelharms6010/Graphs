@@ -70,7 +70,29 @@ while len(visited) < len(room_graph)-1:
     for i in hubs:
         if len(visited[i]) == 0:
             hubs.remove(i)
+        if (len(visited[player.current_room.id]) == 0):
 
+        # teh below code favored the shortest path to any hub remaining - it reduced efficiency by about 20 moves
+        # if len(hubs) > 0:
+        #     print(hubs)
+        #     paths = []
+        #     while player.current_room.id == hubs[-1]:
+        #         hubs.pop()
+        #     for i in hubs:
+        #         paths.append(shortest_path(player.current_room.id, i))
+        #     minlen = min([len(i) for i in paths])
+        #     print(minlen)
+        #     print(paths)
+        #     print(len(paths[0]))
+            
+        #     pathback = [i for i in paths if len(i) == minlen]
+        #     print(pathback)
+        #     # pathback = shortest_path(player.current_room.id, hubs[-1])
+        #     pathback = pathback[0][1:]
+        #     hubs.remove(pathback[-1])
+        #     i = 0
+        #     count=0
+        #     print(player.current_room.id)
 
     if player.current_room.id not in visited:
         visited[player.current_room.id] = player.current_room.get_exits()
