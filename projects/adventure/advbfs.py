@@ -21,9 +21,9 @@ map_file = "maps/main_maze.txt"
 room_graph=literal_eval(open(map_file, "r").read())
 
 room_dict = {}
-for i in room_graph:
-    room_dict[i] = room_graph[i][1]
-print(room_dict)
+for key in room_graph:
+    room_dict[key] = room_graph[key][1]
+
 def get_adjacent(room_id):
     return room_dict[room_id]
 
@@ -44,27 +44,81 @@ opposite_directions = {'n': 's', 's': 'n', 'w': 'e', 'e': 'w'}
 visited[player.current_room.id] = player.current_room.get_exits()
 hubs = []
 
+def shortest_path(starting_vertex, destination_vertex):
+    
+
+    q = Queue()
+    q.enqueue([starting_vertex])
+    visited = set()
+
+    while q.size() > 0:
+        p = q.dequeue()
+        last_vertex = p[-1]
+        if last_vertex == destination_vertex:
+            return p
+        if last_vertex not in visited:
+            visited.add(last_vertex)
+            for neighbor in get_adjacent(last_vertex).values():
+                copy = p.copy()
+                copy.append(neighbor)
+                q.enqueue(copy) 
+
+
+
+
 while len(visited) < len(room_graph)-1:
+
     if player.current_room.id not in visited:
         visited[player.current_room.id] = player.current_room.get_exits()
         visited[player.current_room.id].remove(reverse_path[-1])
 
-    while len(visited[player.current_room.id]) == 0:
-        reverse_move = reverse_path.pop()
-        traversal_path.append(reverse_move)
-        player.travel(reverse_move)
+    # if we hit a dead end, do bfs
+    # if (len(visited[player.current_room.id]) == 0):
+    #     if len(hubs) > 0:
+    #         pathback = shortest_path(player.current_room.id, hubs.pop())
+    #         pathback = pathback[1:]
+    #         i = 0
+    #         count=0
+    #         while len(visited[player.current_room.id]) == 0 and player.current_room.id != pathback[-1]:
+    #             print(pathback)
+    #             currentRoom = player.current_room.id
+    #             count += 1
+    #             for key in room_dict[currentRoom]:
+    #                 try: 
+    #                     if room_dict[currentRoom][key] == pathback[i]:
+                            
+    #                         # pathback.remove(room_dict[player.current_room.id][key])
+    #                         traversal_path.append(key)
+    #                         player.travel(key)
+    #                         i+=1
+    #                 except:
+    #                     i+=1
+    #                     continue
 
-    dir = visited[player.current_room.id].pop(0)
+
+
+        # while len(visited[player.current_room.id]) == 0:
+        #     reverse_move = reverse_path.pop()
+        #     traversal_path.append(reverse_move)
+        #     player.travel(reverse_move)
+    print(player.current_room.id)
+    if len(visited[player.current_room.id]) > 1:
+        hubs.append(player.current_room.id)
+    if len(visited[player.current_room.id]) > 0:
+        dir = visited[player.current_room.id].pop(0)
+    
+    # print(visited[player.current_room.id])
+    # print(traversal_path)
     if getattr(player.current_room, f"{dir}_to").id not in visited:
         reverse_path.append(opposite_directions[dir])
         traversal_path.append(dir)
         player.travel(dir)
-    # else:
-    #     traversal_path.append(dir)
-    #     player.travel(dir)
-    #     print(opposite_directions[dir])
-    #     visited[player.current_room.id].remove(opposite_directions[dir])
-    #     reverse_path = []
+    else:
+        traversal_path.append(dir)
+        player.travel(dir)
+        print(opposite_directions[dir])
+        visited[player.current_room.id].remove(opposite_directions[dir])
+        reverse_path = []
         
     # traversal_path.append(dir)
     # player.travel(dir)
