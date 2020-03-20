@@ -73,27 +73,27 @@ while len(visited) < len(room_graph)-1:
         visited[player.current_room.id].remove(reverse_path[-1])
 
     # if we hit a dead end, do bfs
-    # if (len(visited[player.current_room.id]) == 0):
-    #     if len(hubs) > 0:
-    #         pathback = shortest_path(player.current_room.id, hubs.pop())
-    #         pathback = pathback[1:]
-    #         i = 0
-    #         count=0
-    #         while len(visited[player.current_room.id]) == 0 and player.current_room.id != pathback[-1]:
-    #             print(pathback)
-    #             currentRoom = player.current_room.id
-    #             count += 1
-    #             for key in room_dict[currentRoom]:
-    #                 try: 
-    #                     if room_dict[currentRoom][key] == pathback[i]:
+    if (len(visited[player.current_room.id]) == 0):
+        if len(hubs) > 0:
+            pathback = shortest_path(player.current_room.id, hubs.pop())
+            pathback = pathback[1:]
+            i = 0
+            count=0
+            while len(visited[player.current_room.id]) == 0 and player.current_room.id != pathback[-1]:
+                print(pathback)
+                currentRoom = player.current_room.id
+                count += 1
+                for key in room_dict[currentRoom]:
+                    try: 
+                        if room_dict[currentRoom][key] == pathback[i]:
                             
-    #                         # pathback.remove(room_dict[player.current_room.id][key])
-    #                         traversal_path.append(key)
-    #                         player.travel(key)
-    #                         i+=1
-    #                 except:
-    #                     i+=1
-    #                     continue
+                            # pathback.remove(room_dict[player.current_room.id][key])
+                            traversal_path.append(key)
+                            player.travel(key)
+                            i+=1
+                    except:
+                        i+=1
+                        continue
 
 
 
@@ -101,7 +101,7 @@ while len(visited) < len(room_graph)-1:
         #     reverse_move = reverse_path.pop()
         #     traversal_path.append(reverse_move)
         #     player.travel(reverse_move)
-    print(player.current_room.id)
+    # print(player.current_room.id)
     if len(visited[player.current_room.id]) > 1:
         hubs.append(player.current_room.id)
     if len(visited[player.current_room.id]) > 0:
@@ -113,12 +113,14 @@ while len(visited) < len(room_graph)-1:
         reverse_path.append(opposite_directions[dir])
         traversal_path.append(dir)
         player.travel(dir)
-    else:
-        traversal_path.append(dir)
-        player.travel(dir)
-        print(opposite_directions[dir])
-        visited[player.current_room.id].remove(opposite_directions[dir])
-        reverse_path = []
+
+    # print([i for i in room_dict if i not in visited])
+    # else:
+    #     traversal_path.append(dir)
+    #     player.travel(dir)
+    #     print(opposite_directions[dir])
+    #     visited[player.current_room.id].remove(opposite_directions[dir])
+    #     reverse_path = []
         
     # traversal_path.append(dir)
     # player.travel(dir)
