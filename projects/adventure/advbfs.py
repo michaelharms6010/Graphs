@@ -75,12 +75,16 @@ while len(visited) < len(room_graph)-1:
     # if we hit a dead end, do bfs
     if (len(visited[player.current_room.id]) == 0):
         if len(hubs) > 0:
-            pathback = shortest_path(player.current_room.id, hubs.pop())
+            print(hubs)
+            while player.current_room.id == hubs[-1]:
+                hubs.pop()
+            pathback = shortest_path(player.current_room.id, hubs[-1])
             pathback = pathback[1:]
             i = 0
             count=0
+            print(player.current_room.id)
+            print(pathback)
             while len(visited[player.current_room.id]) == 0 and player.current_room.id != pathback[-1]:
-                print(pathback)
                 currentRoom = player.current_room.id
                 count += 1
                 for key in room_dict[currentRoom]:
@@ -109,10 +113,13 @@ while len(visited) < len(room_graph)-1:
     
     # print(visited[player.current_room.id])
     # print(traversal_path)
-    if getattr(player.current_room, f"{dir}_to").id not in visited:
-        reverse_path.append(opposite_directions[dir])
-        traversal_path.append(dir)
-        player.travel(dir)
+    try:
+        if getattr(player.current_room, f"{dir}_to").id not in visited:
+            reverse_path.append(opposite_directions[dir])
+            traversal_path.append(dir)
+            player.travel(dir)
+    except:
+        continue
 
     # print([i for i in room_dict if i not in visited])
     # else:
