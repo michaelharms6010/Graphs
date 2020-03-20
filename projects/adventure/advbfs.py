@@ -21,9 +21,9 @@ map_file = "maps/main_maze.txt"
 room_graph=literal_eval(open(map_file, "r").read())
 
 room_dict = {}
-for i in room_graph:
-    room_dict[i] = room_graph[i][1]
-print(room_dict)
+for key in room_graph:
+    room_dict[key] = room_graph[key][1]
+
 def get_adjacent(room_id):
     return room_dict[room_id]
 
@@ -44,21 +44,87 @@ opposite_directions = {'n': 's', 's': 'n', 'w': 'e', 'e': 'w'}
 visited[player.current_room.id] = player.current_room.get_exits()
 hubs = []
 
+def shortest_path(starting_vertex, destination_vertex):
+    
+
+    q = Queue()
+    q.enqueue([starting_vertex])
+    visited = set()
+
+    while q.size() > 0:
+        p = q.dequeue()
+        last_vertex = p[-1]
+        if last_vertex == destination_vertex:
+            return p
+        if last_vertex not in visited:
+            visited.add(last_vertex)
+            for neighbor in get_adjacent(last_vertex).values():
+                copy = p.copy()
+                copy.append(neighbor)
+                q.enqueue(copy) 
+
+
+
+
 while len(visited) < len(room_graph)-1:
+    for i in hubs:
+        if len(visited[i]) == 0:
+            hubs.remove(i)
+
     if player.current_room.id not in visited:
         visited[player.current_room.id] = player.current_room.get_exits()
         visited[player.current_room.id].remove(reverse_path[-1])
 
-    while len(visited[player.current_room.id]) == 0:
-        reverse_move = reverse_path.pop()
-        traversal_path.append(reverse_move)
-        player.travel(reverse_move)
+    # if we hit a dead end, do bfs
+    if (len(visited[player.current_room.id]) == 0):
+        if len(hubs) > 0:
+            print(hubs)
+            while player.current_room.id == hubs[-1]:
+                hubs.pop()
+            pathback = shortest_path(player.current_room.id, hubs[-1])
+            pathback = pathback[1:]
+            i = 0
+            count=0
+            print(player.current_room.id)
+            print(pathback)
+            while len(visited[player.current_room.id]) == 0 and player.current_room.id != pathback[-1]:
+                currentRoom = player.current_room.id
+                count += 1
+                for key in room_dict[currentRoom]:
+                    try: 
+                        if room_dict[currentRoom][key] == pathback[i]:
+                            
+                            # pathback.remove(room_dict[player.current_room.id][key])
+                            traversal_path.append(key)
+                            player.travel(key)
+                            i+=1
+                    except:
+                        i+=1
+                        continue
 
-    dir = visited[player.current_room.id].pop(0)
-    if getattr(player.current_room, f"{dir}_to").id not in visited:
-        reverse_path.append(opposite_directions[dir])
-        traversal_path.append(dir)
-        player.travel(dir)
+
+
+        # while len(visited[player.current_room.id]) == 0:
+        #     reverse_move = reverse_path.pop()
+        #     traversal_path.append(reverse_move)
+        #     player.travel(reverse_move)
+    # print(player.current_room.id)
+    if len(visited[player.current_room.id]) > 1:
+        hubs.append(player.current_room.id)
+    if len(visited[player.current_room.id]) > 0:
+        dir = visited[player.current_room.id].pop(0)
+    
+    # print(visited[player.current_room.id])
+    # print(traversal_path)
+    try:
+        if getattr(player.current_room, f"{dir}_to").id not in visited:
+            reverse_path.append(opposite_directions[dir])
+            traversal_path.append(dir)
+            player.travel(dir)
+    except:
+        continue
+
+    # print([i for i in room_dict if i not in visited])
     # else:
     #     traversal_path.append(dir)
     #     player.travel(dir)
@@ -68,6 +134,31 @@ while len(visited) < len(room_graph)-1:
         
     # traversal_path.append(dir)
     # player.travel(dir)
+
+    
+        # teh below code favored the shortest path to any hub remaining - it reduced efficiency by about 20 moves
+        # I'm thinking maybe some more thorough elimination of hubs would maybe make this useful
+        # if (len(visited[player.current_room.id]) == 0):
+        # if len(hubs) > 0:
+        #     print(hubs)
+        #     paths = []
+        #     while player.current_room.id == hubs[-1]:
+        #         hubs.pop()
+        #     for i in hubs:
+        #         paths.append(shortest_path(player.current_room.id, i))
+        #     minlen = min([len(i) for i in paths])
+        #     print(minlen)
+        #     print(paths)
+        #     print(len(paths[0]))
+            
+        #     pathback = [i for i in paths if len(i) == minlen]
+        #     print(pathback)
+        #     # pathback = shortest_path(player.current_room.id, hubs[-1])
+        #     pathback = pathback[0][1:]
+        #     hubs.remove(pathback[-1])
+        #     i = 0
+        #     count=0
+        #     print(player.current_room.id)
 
 
 
